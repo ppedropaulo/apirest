@@ -2,6 +2,7 @@ package com.tellma.apirest.models;
 
 import java.io.Serializable;
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 
 @Entity
@@ -12,7 +13,15 @@ public class Messages implements Serializable {
 	@Id
 	private Long id;
 	
-	
+	Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+	public Timestamp getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(Timestamp timestamp) {
+		this.timestamp = timestamp;
+	}
 
 	private String body;
 
