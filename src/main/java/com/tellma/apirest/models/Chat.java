@@ -1,5 +1,6 @@
 package com.tellma.apirest.models;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -15,7 +16,11 @@ public class Chat implements Serializable {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	private Long chatid;
+	private Long id;
+	
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "chat_id")
+	private List<Messages> messages = new ArrayList<>();
 	
 	@ManyToMany(fetch = FetchType.LAZY,
             cascade = {
@@ -35,12 +40,12 @@ public class Chat implements Serializable {
 
 	private String chatname;
 
-	public Long getChatid() {
-		return chatid;
+	public Long getId() {
+		return id;
 	}
 
-	public void setChatid(Long chatid) {
-		this.chatid = chatid;
+	public void setId(Long chatid) {
+		this.id = chatid;
 	}
 
 
