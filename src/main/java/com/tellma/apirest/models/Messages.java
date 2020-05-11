@@ -2,6 +2,9 @@ package com.tellma.apirest.models;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
+
+
 import java.sql.Timestamp;
 
 
@@ -11,17 +14,21 @@ public class Messages implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
 	private String text;
 	
 	Timestamp date = new Timestamp(System.currentTimeMillis());
 	
+	
 	@ManyToOne(fetch = FetchType.LAZY)
     private ChatUser chatuser;
 	
+	
 	@ManyToOne(fetch = FetchType.LAZY)
     private Chat chat;
+	
 	
 	
 	public Chat getChat() {

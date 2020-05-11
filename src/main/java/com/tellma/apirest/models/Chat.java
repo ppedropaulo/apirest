@@ -1,11 +1,11 @@
 package com.tellma.apirest.models;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.*;
+
+
 
 
 
@@ -32,8 +32,10 @@ public class Chat implements Serializable {
             cascade = {
                 CascadeType.PERSIST,
                 CascadeType.MERGE
-            },
-            mappedBy = "chats")
+            })
+	@JoinTable(name = "Participants",
+    joinColumns = { @JoinColumn(name = "chatid") },
+    inverseJoinColumns = { @JoinColumn(name = "userid") })
     private Set<ChatUser> users = new HashSet<>();
 
 	

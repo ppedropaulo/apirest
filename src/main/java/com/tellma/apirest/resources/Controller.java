@@ -3,7 +3,6 @@ package com.tellma.apirest.resources;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,6 +11,7 @@ import com.tellma.apirest.models.Chat;
 import com.tellma.apirest.models.ChatUser;
 import com.tellma.apirest.models.Messages;
 import com.tellma.apirest.modelsdto.ChatDTO;
+import com.tellma.apirest.modelsdto.MessageDTO;
 import com.tellma.apirest.repository.ChatRepository;
 import com.tellma.apirest.repository.ChatUserRepository;
 import com.tellma.apirest.repository.MessagesRepository;
@@ -110,9 +110,27 @@ public class Controller {
 
 	 
 	 @PostMapping(value = "/messages")
-	 public void CriarMensagem(@RequestBody Messages mensagem) {
+	 public List<Map<String,String>> CriarMensagem(@RequestBody MessageDTO msg) {
+		 List<Map<String,String>> responses = new ArrayList<>();
+		 
+		 Messages mensagem = new Messages();
+		 mensagem.setChat(chatrepository.findById(msg.getChatId()).orElse(null));
+		 mensagem.setChatuser(chatuserrepository.findById(msg.getUserId()).orElse(null));
+		 mensagem.setText(msg.getText());
 		 
 		 messagesrepository.save(mensagem);
+		 
+		 Map<String,String> map = new HashMap<String,String>();
+		 map.put("id", msg.getUserId().toString());
+		 map.put("text", msg.getText());
+		 map.put("date", messagesrepository.save(mensagem).getDate().toString());
+		 map.put("username", messagesrepository.save(mensagem).getChatuser().getUsername());
+		 map.put("userId", messagesrepository.save(mensagem).getChatuser().getId().toString());
+		 map.put("chatId", messagesrepository.save(mensagem).getChat().getId().toString());
+		 responses.add(map)	;
+		 
+		 
+		 return responses;
 	 }
 	 
 	 
@@ -143,13 +161,15 @@ public class Controller {
 	    public Map<String,String> CriarSala(@RequestBody ChatDTO chatdto)
 	    {   
 		 Chat chat = new Chat();
-		 chat.setChatname(chatdto.getChatname());
+		 chat.setChatname(chatdto.getName());
 		 Set<ChatUser> users = new HashSet<ChatUser>();
-		 for(String participante: chatdto.getParts()) {
+		 for(String participante: chatdto.getUsers()) {
 			 users.add(chatuserrepository.findByUsername(participante));
+			 ChatUser user = chatuserrepository.findByUsername(participante);
+			 chat.getUsers().add(user);
 		 }
 		
-		 chat.getUsers().addAll(users);
+		
 		 chatrepository.save(chat);
 		 
 		 HashMap<String,String> map = new HashMap<>();

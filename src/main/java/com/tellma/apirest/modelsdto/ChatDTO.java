@@ -4,24 +4,24 @@ import java.util.List;
 
 public class ChatDTO {
 	
-	private String chatname;
+	private String name;
 	
-    private List<String> parts;
+    private List<String> users;
 
-	public String getChatname() {
-		return chatname;
+	public String getName() {
+		return name;
 	}
 
-	public void setChatname(String chatname) {
-		this.chatname = chatname;
+	public void setName(String chatname) {
+		this.name = chatname;
 	}
 
-	public List<String> getParts() {
-		return parts;
+	public List<String> getUsers() {
+		return users;
 	}
 
-	public void setParts(List<String> parts) {
-		this.parts = parts;
+	public void setUsers(List<String> parts) {
+		this.users = parts;
 	}
 
 }
