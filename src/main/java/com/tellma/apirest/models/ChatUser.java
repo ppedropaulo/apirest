@@ -18,22 +18,16 @@ public class ChatUser implements Serializable {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
-	
 	private String username;
 	
-	public Set<Chat> getChats() {
-		return chats;
-	}
-
-	public void setChats(Set<Chat> chats) {
-		this.chats = chats;
-	}
-
 	private String password;
 	
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "chatuser_id")
-	private List<Messages> messages = new ArrayList<>();
+	@OneToMany(
+	        cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+	        orphanRemoval = true
+	    )
+ @JoinColumn(name = "chatuser_id")
+ private Set<Messages> messages = new HashSet<>();
 	
 	@ManyToMany(fetch = FetchType.LAZY,
             cascade = {
@@ -45,7 +39,27 @@ public class ChatUser implements Serializable {
             inverseJoinColumns = { @JoinColumn(name = "chatid") })
     private Set<Chat> chats = new HashSet<>();
 	
+	public Set<Chat> getChats() {
+		return chats;
+	}
 
+	public void setChats(Set<Chat> chats) {
+		this.chats = chats;
+	}
+
+	
+
+	public Set<Messages> getMessages() {
+		return messages;
+	}
+
+	public void setMessages(Set<Messages> messages) {
+		this.messages = messages;
+	}
+
+
+	
+	
 	
 
 	public Long getId() {
