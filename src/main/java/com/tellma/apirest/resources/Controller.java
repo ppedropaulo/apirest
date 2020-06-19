@@ -2,6 +2,7 @@ package com.tellma.apirest.resources;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,10 +25,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import java.sql.*;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+@CrossOrigin
 @RestController
 @RequestMapping(value="")
 public class Controller {
@@ -45,7 +49,7 @@ public class Controller {
 	
 	
 	 
-	 
+	 @CrossOrigin
 	 @PostMapping(value = "/signup")
 	    public Map<String,String> Post(@Valid @RequestBody ChatUser chatuser)
 	    {   
@@ -65,7 +69,7 @@ public class Controller {
 		 	}
 	    
 	    }
-	 
+	 @CrossOrigin
 	 @PostMapping(value = "/login")
 	    public Map<String,String> Post1(@Valid @RequestBody ChatUser chatuser)
 	    {   
@@ -87,28 +91,29 @@ public class Controller {
 		 	}
 		 	
 	    }
-	 
+	 @CrossOrigin
 	 @GetMapping(value = "/rooms")
 	    public List<Map<String,String>> ListarChats(@RequestParam("user_id") Long user_id)
 	    {   
 		List<Map<String,String>> responses = new ArrayList<>();
 		
-		
 		 
 		 Optional<ChatUser> temp = chatuserrepository.findById(user_id);
 		 Set<Chat> chatss = temp.get().getChats();
+		 
 		 
 		 for (Chat chat : chatss) {
 			 Map<String,String> map = new HashMap<String,String>();
 			 map.put("roomId", chat.getId().toString());
 			 map.put("name", chat.getChatname());
-			 responses.add(map)	;
+			 
+			  responses.add(map);
 	        }
 		
 		 return responses;
 	    }
 
-	 
+	 @CrossOrigin
 	 @PostMapping(value = "/messages")
 	 public List<Map<String,String>> CriarMensagem(@RequestBody MessageDTO msg) {
 		 List<Map<String,String>> responses = new ArrayList<>();
@@ -133,7 +138,7 @@ public class Controller {
 		 return responses;
 	 }
 	 
-	 
+	 @CrossOrigin
 	 @GetMapping(value = "/messages")
 	    public List<Map<String,String>> ListarMensagens(@RequestParam("room_id") Long user_id)
 	    {   
@@ -157,6 +162,7 @@ public class Controller {
 		 return responses;
 	    }
 	 
+	 @CrossOrigin
 	 @PostMapping(value = "/rooms")
 	    public Map<String,String> CriarSala(@RequestBody ChatDTO chatdto)
 	    {   
@@ -179,8 +185,31 @@ public class Controller {
 	    }
 	 
 	 
+	 @CrossOrigin
+	 @GetMapping(value = "/users")
+	    public List<Map<String,String>> ListarUsers(@RequestParam("room_id") Long room_id)
+	    {   
+		List<Map<String,String>> responses = new ArrayList<>();
+		
+		
+		 
+		 Optional<Chat> temp = chatrepository.findById(room_id);
+		 Set<ChatUser> userss = temp.get().getUsers();
+		 
+		 for (ChatUser users : userss) {
+			 Map<String,String> map = new HashMap<String,String>();
+			 
+			 map.put("name", users.getUsername());
+			 map.put("userId", users.getId().toString());
+			 
+			 responses.add(map)	;
+	        }
+		
+		 return responses;
+	    }
 	 
-	 	
+	 
+	 
 	 
 
 	 
