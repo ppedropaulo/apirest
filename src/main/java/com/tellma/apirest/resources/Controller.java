@@ -12,6 +12,7 @@ import com.tellma.apirest.models.Chat;
 import com.tellma.apirest.models.ChatUser;
 import com.tellma.apirest.models.Messages;
 import com.tellma.apirest.modelsdto.ChatDTO;
+import com.tellma.apirest.modelsdto.CompleteChat;
 import com.tellma.apirest.modelsdto.MessageDTO;
 import com.tellma.apirest.repository.ChatRepository;
 import com.tellma.apirest.repository.ChatUserRepository;
@@ -24,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
+import java.math.BigInteger;
 import java.sql.*;
 
 import javax.validation.Valid;
@@ -98,19 +99,44 @@ public class Controller {
 		List<Map<String,String>> responses = new ArrayList<>();
 		
 		 
-		 Optional<ChatUser> temp = chatuserrepository.findById(user_id);
-		 Set<Chat> chatss = temp.get().getChats();
+		
+		 List<Object[]> msgs = chatrepository.getLastMessage(user_id);	
+		 List<CompleteChat> result = new ArrayList<CompleteChat>();
 		 
-		 
-		 for (Chat chat : chatss) {
-			 Map<String,String> map = new HashMap<String,String>();
-			 map.put("roomId", chat.getId().toString());
-			 map.put("name", chat.getChatname());
+		 for(Object[] obj : msgs) {
+			 CompleteChat data = new CompleteChat();
+			 if(obj[2]==null) {
+				 data.setChatname((String)obj[0]);
+				 data.setChatid((BigInteger)obj[1]);
+			 }
+			 else {
+				 data.setIsmessage("true");
+				 data.setChatname((String)obj[0]);
+				 data.setChatid((BigInteger)obj[1]);
+				 data.setText((String)obj[2]);
+				 data.setDate((Timestamp)obj[3]);
+				 data.setUsername((String)obj[4]); 
+			 }
 			 
-			  responses.add(map);
+			 result.add(data);
+		 }
+		 
+		 
+		 
+		 for (CompleteChat chat : result) {
+			 Map<String,String> map = new HashMap<String,String>();
+			 map.put("roomId", chat.getChatid().toString());
+			 map.put("name", chat.getChatname());
+			 map.put("lastmessage",chat.getIsmessage());
+			 map.put("username", chat.getUsername());
+			 map.put("timestamp", chat.getDate().toString());
+			 map.put("text", chat.getText());
+			 
+			 responses.add(map)	;
 	        }
 		
-		 return responses;
+		 
+		return responses;
 	    }
 
 	 @CrossOrigin
@@ -207,6 +233,7 @@ public class Controller {
 		
 		 return responses;
 	    }
+	 
 	 
 	 
 	 
